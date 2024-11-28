@@ -1,0 +1,34 @@
+{
+  "name": "school_api",
+  "version": "1.0.0",
+  "description": "school_api for school management system",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node -r dotenv/config ./db/seed/main.seed.js && node ./swagger/swagger.js && nodemon index.js",
+    "swagger": "node ./swagger/swagger.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "school_api"
+  ],
+  "author": "Dany Khgney",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "express-rate-limit": "^7.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.8.2",
+    "nodemon": "^3.1.7",
+    "redis": "^4.7.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "swagger-autogen": "^2.23.7"
+  }
+}

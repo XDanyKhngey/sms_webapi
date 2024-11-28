@@ -1,0 +1,66 @@
+services:
+  express-app:
+    container_name: sms_webapi  # Set the container name for the Express app
+    build:
+      context: .  # Use the current directory for the build context
+      dockerfile: Dockerfile  # Specify the Dockerfile to use
+    ports:
+      - "${PORT}:${PORT}"  # Map the port dynamically based on .env
+    volumes:
+      - .:/app  # Mount the project directory
+      - /app/node_modules  # Keep node_modules isolated from host
+    environment:
+      - PORT=${PORT}
+      - STAGE=${STAGE}
+      - DB_SERVER=${DB_SERVER}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRE=${JWT_EXPIRE}
+      - REFRESH_TOKEN_EXPIRED_IN_HOUR=${REFRESH_TOKEN_EXPIRED_IN_HOUR}
+      - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS}
+      - RATE_LIMIT_MAX=${RATE_LIMIT_MAX}
+      - CORS_ENABLED=${CORS_ENABLED}
+      - CORS_ORIGIN=${CORS_ORIGIN}
+      - CORS_METHODS=${CORS_METHODS}
+      - CORS_ALLOWED_HEADERS=${CORS_ALLOWED_HEADERS}
+      - REDIS_HOST=${REDIS_HOST}  # Redis connection details
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_CACHE_EX_MIN=${REDIS_CACHE_EX_MIN}
+      - MONGO_URI=mongodb://mongo:27017/${DB_NAME}  # MongoDB connection URI
+    env_file:
+      - .env  # Specify the .env file to load environment variables
+    networks:
+      - backend  # Connect to the backend network
+
+  redis:
+    container_name: redis_server  # Set the container name for Redis
+    image: redis:alpine  # Use the official Redis image with the Alpine variant
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}  # Pass the Redis password if required
+    ports:
+      - "6379:6379"  # Expose Redis default port
+    networks:
+      - backend  # Connect to the same backend network as express-app
+
+  mongo:
+    container_name: mongo_db  # Set the container name for MongoDB
+    image: mongo:latest  # Use the official MongoDB image
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}  # Root username
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}  # Root password
+    ports:
+      - "27017:27017"  # Expose MongoDB default port
+    volumes:
+      - mongo_data:/data/db  # Persist MongoDB data
+    networks:
+      - backend  # Connect to the same backend network as express-app
+
+networks:
+  backend:
+    driver: bridge  # Use the bridge network for internal communication
+
+volumes:
+  mongo_data:  # Declare a volume for MongoDB data persistence
